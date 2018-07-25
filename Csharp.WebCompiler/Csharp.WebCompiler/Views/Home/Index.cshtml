@@ -12,50 +12,87 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.39.2/mode/clike/clike.js"></script>
 </head>
 <body>
-<div class="container">
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="#">C# Web Compiler</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav">
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Compiler </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">About</a>
-                </li>
- 
-            </ul>
-        </div>
-    </nav>
-    <br />
-    <div class="alert alert-info" role="alert">
-        <h5 class="alert-heading">Welcome!</h5>
-        <p class="mb-0">Write you code in the text editor.Happy Coding :)</p>
-    </div>
-    <br />
-    <textarea id="c-code">
-//This line is commented
+    <div class="container">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <a class="navbar-brand" href="#">C# Web Compiler</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Compiler </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">About</a>
+                    </li>
 
+                </ul>
+            </div>
+        </nav>
+        <br />
+        <div class="alert alert-info" role="alert">
+            <h5 class="alert-heading">Welcome!</h5>
+            <p class="mb-0">Write you code in the text editor.Happy Coding :)</p>
+        </div>
+        <br />
+        <textarea id="csharp-code">
+//This line is commented
+using System;
 namespace ashok{
  public class MyClass{
-  public static void Main(string args[]){
-    Console.WriteLine('ashok');
+  public static void Main(string[] args){
+    Console.WriteLine("ashok");
  }
 }
 }
 </textarea>
-    <br/>
-    <button class="btn btn-success" style="float:left"><img src="~/Images/cog.ico" style="height: 27px"> Compile & Run</button>
-</div>
-<script>
-    var cEditor = CodeMirror.fromTextArea(document.getElementById("c-code"), {
-        lineNumbers: true,
-        matchBrackets: true,
-        mode: "text/x-csharp"
-    });
-</script>
+        <br />
+        <button onclick="CompileCode()" class="btn btn-success" style="float:left"><img src="~/Images/cog.ico" style="height: 27px"> Compile & Run</button>
+        <br/><br/>
+        <button type="button" class="btn btn-success" id="compile-success" style="display: none">
+            Success :) 
+        </button>
+
+        <button type="button" class="btn btn-danger" id="compile-fail" style="display: none">
+            Errors <span class="badge badge-light" id="error-count"></span>
+        </button>
+        <br/>
+        <textarea readonly class="form-control" rows="5" id="output" style="display: none"></textarea>
+
+        </div>
+    <script>
+        var cEditor = CodeMirror.fromTextArea(document.getElementById("csharp-code"), {
+            lineNumbers: true,
+            matchBrackets: true,
+            mode: "text/x-csharp"
+        });
+
+        function CompileCode() {
+            cEditor.save();
+            var request = {
+                code: null,
+                input: null
+            };
+            request.code = $("#csharp-code").val();
+            $.post("api/compiler/compile", request, function (res) {
+
+                if (res.Success) {
+                    $("#compile-success").show();
+                    $("#compile-fail").hide();
+                    $("#output").show();
+                    $("#output").val(res.Result);
+                } else {
+                    $("#error-count").html(res.ErrorCount);
+                    $("#compile-success").hide();
+                    $("#compile-fail").show();
+                    $("#output").show();
+                    $("#output").val(res.Result);
+                }
+
+            });
+
+        }
+    </script>
 </body>
 </html>

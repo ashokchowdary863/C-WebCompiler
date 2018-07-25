@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 namespace CompileService {
   public class Output
   {
-    public bool Success;
-    public string Result;
+    public bool Success { get; set; }
+    public string Result { get; set; }
+    public int ErrorCount { get; set; }
   }
 }

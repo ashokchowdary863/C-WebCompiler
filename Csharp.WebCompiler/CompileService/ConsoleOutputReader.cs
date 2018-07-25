@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,6 +24,9 @@ namespace CompileService {
       while ( !process.StandardOutput.EndOfStream ) {
          outputString.AppendLine(process.StandardOutput.ReadLine());
       }
+
+      process.WaitForExit();
+      File.Delete(exePath);
       return outputString.ToString();
     }
   }
